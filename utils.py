@@ -7,7 +7,7 @@ import pandas as pd
 from typing import List
 
 DESIRED_COLS = [
-    "Consommation", "Thermique", "Nucléaire", "Eolien", "Solaire", "Hydraulique",
+    "Nature", "Consommation", "Thermique", "Nucléaire", "Eolien", "Solaire", "Hydraulique",
     "Pompage", "Bioénergies", "Stockage batterie", "Déstockage batterie",
     "Eolien terrestre", "Eolien offshore"
 ]

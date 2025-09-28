@@ -15,6 +15,12 @@ class Eco2mixRetriever:
             "User-Agent": user_agent or "eco2mix-retriever (https://github.com/henriupton99/eco2mix-retriever)"
         })
         self.sleep = float(sleep_between_requests)
+        
+        self.dtypes = {
+            "Données temps réel": "TR",
+            "Données consolidées": "CONS",
+            "Données définitives": "DEF"
+        }
 
     def _download_bytes(self, date_dt: datetime, region: str) -> bytes:
         params = {"date": date_dt.strftime("%d/%m/%Y")}
@@ -67,6 +73,8 @@ class Eco2mixRetriever:
         existing = [c for c in result_cols if c in df.columns]
         result = df.loc[:, existing].copy()
         
+        result['Nature'] = result['Nature'].map(self.dtypes)
+                
         return result
 
     def collect_range(self, start_date: str, end_date: str, regions: List[str], outdir: str):
@@ -81,7 +89,9 @@ class Eco2mixRetriever:
             for region in regions:
                 try:
                     df = self.download_day_region(current, region)
-                    fname = f"{outdir.rstrip('/')}/eco2mix_{region}_{current.strftime('%Y-%m-%d')}.csv"
+                    dtype = df.Nature.unique()[0]
+                    df.drop(["Nature"], axis=1, inplace=True)
+                    fname = f"{outdir.rstrip('/')}/eco2mix_{region}_{dtype}_{current.strftime('%Y-%m-%d')}.csv"
                     df.to_csv(fname, index=False, sep=';', encoding='utf-8')
                     print(f"Saved: {fname} ({len(df)} rows)")
                 except Exception as ex:
