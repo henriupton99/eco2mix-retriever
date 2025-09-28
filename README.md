@@ -11,7 +11,7 @@ pip install uv
 uv --version
 ```
 
-### 2. Available data
+### 2. Retrieve the data
 
 Data can be retrieved by a general command by providing the following list of arguments : 
 * **start**: start date of retrieval, inclusive (format *YYYY-MM-DD*)
@@ -20,6 +20,7 @@ Data can be retrieved by a general command by providing the following list of ar
 * **outdir**: path to output directory to save the output files
 
 List of available regions codes : 
+* FR -> France
 * ARA -> Auvergne-Rhône-Alpes
 * BFC -> Bourgogne-Franche-Comté
 * BRE -> Bretagne
@@ -33,12 +34,19 @@ List of available regions codes :
 * PLO -> Pays de la Loire
 * PAC -> Provence-Alpes-Côte d'Azur
 
-#### 2.1. Real time production / consumption data
+There are three types of data, regarding the proximity of the actual retrieval date and the requested dates :
+* **temps-reel** : TR
+* **consolide** : CONS
+* **definitif** : DEF
 
 Example of output format : [here](./data/eco2mix_ARA_2025-09-01.csv)
 
 Command : 
 ```bash
-uv run main.py --start 2025-09-01 --end 2025-09-05 --regions ARA --outdir ./data
+uv run main.py --start 2025-09-01 --end 2025-09-05 --regions ARA FR --outdir ./data
 ```
+
+### 3. Postprocessing / extraction from raw data
+
+TBU
 

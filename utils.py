@@ -58,14 +58,14 @@ def parse_eco2mix_bytes(content: bytes) -> pd.DataFrame:
                 except Exception:
                     continue
             text = data.decode('latin-1', errors='replace')
-            return pd.read_csv(io.StringIO(text), sep='\t', engine='python', on_bad_lines='skip')
+            return pd.read_csv(io.StringIO(text), sep='\t', engine='python', on_bad_lines='skip', na_values=['ND'])
     
     for sep in ['\t', ';', ',']:
         try:
-            return pd.read_csv(io.BytesIO(content), sep=sep, encoding='latin-1', engine='python', on_bad_lines='skip')
+            return pd.read_csv(io.BytesIO(content), sep=sep, encoding='latin-1', engine='python', on_bad_lines='skip', na_values=['ND'])
         except Exception:
             continue
     try:
-        return pd.read_excel(io.BytesIO(content), engine='xlrd')
+        return pd.read_excel(io.BytesIO(content), engine='xlrd', na_values=['ND'])
     except Exception as e:
         raise ValueError("Impossible to parse the imput content (no zip text, no csv).") from e

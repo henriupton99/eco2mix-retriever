@@ -17,7 +17,9 @@ class Eco2mixRetriever:
         self.sleep = float(sleep_between_requests)
 
     def _download_bytes(self, date_dt: datetime, region: str) -> bytes:
-        params = {"date": date_dt.strftime("%d/%m/%Y"), "region": region}
+        params = {"date": date_dt.strftime("%d/%m/%Y")}
+        if region != "FR":
+            params["region"] = region
         resp = self.session.get(self.base_url, params=params, timeout=30)
         resp.raise_for_status()
         return resp.content
@@ -29,6 +31,11 @@ class Eco2mixRetriever:
         """
         content = self._download_bytes(date_dt, region)
         df = parse_eco2mix_bytes(content)
+        df = df.iloc[:-1, :]
+        if region == "FR":
+            columns = df.columns[1:]
+            df = df.iloc[:, :-1]
+            df.columns = columns
         
         available_cols = df.columns.tolist()
         matched_cols = match_desired_columns(available_cols)
@@ -50,7 +57,6 @@ class Eco2mixRetriever:
             raise KeyError("Impossible to find 'Heures' column in file (actual columns: {}).".format(available_cols))
         
         df['date_concat'] = df[date_col].astype(str).str.strip() + ' ' + df[heures_col].astype(str).str.strip()
-        
         df['date'] = pd.to_datetime(df['date_concat'], dayfirst=False, errors='coerce')
         
         if df['date'].isna().sum() > 0.5 * len(df):
